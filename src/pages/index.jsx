@@ -33,7 +33,7 @@ const HomePage = () => {
         if (token) {
           // 2. Bắn token xuống Backend Node.js để giải mã
           // LƯU Ý: Đổi "https://domain-backend-cua-ban.com" thành link thật của Backend
-          const response = await fetch("https://domain-backend-cua-ban.com/decode-phone", {
+          const response = await fetch("https://api.hto.edu.vn/get-phone", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

@@ -1,6 +1,4 @@
-  // Nhớ import globalFormMemory từ file hook của bạn
 import { useFormState, globalFormMemory } from "../hooks/useFormState";
-
 import React, { useState } from "react";
 import { Page, useNavigate, Modal, Icon } from "zmp-ui";
 // Lưu ý: Đổi tên file ảnh mascot đội mũ cử nhân cho đúng với source của bạn
@@ -32,53 +30,46 @@ const Quiz2_2Page = () => {
     setIsConfirmVisible(true);
   };
 
+  const handleConfirm = async () => {
+    setIsConfirmVisible(false);
 
-// ... (code UI giữ nguyên)
+    // 1. Gom toàn bộ dữ liệu từ các bước trước
+    const payload = {
+      name: globalFormMemory["q1_name"] || "",
+      email: globalFormMemory["q1_email"] || "",
+      gender: globalFormMemory["q1_gender"] || "",
+      province: globalFormMemory["q1_province"] || "",
+      school: globalFormMemory["q1_school"] || "",
+      className: globalFormMemory["q1_class"] || "",
+      selectedBlock: globalFormMemory["selectedBlock"] || "",
+      pathway: "Trong nước", 
+      eduSystem: eduSystem,  
+      major: major,
+      phone: globalFormMemory["user_phone"] || "0987654321", 
+    };
 
-const handleConfirm = async () => {
-  setIsConfirmVisible(false);
+    try {
+      // ĐÃ FIX: Chuyển về Domain của Server công ty để điện thoại không bị báo lỗi
+      const response = await fetch("https://api.hto.edu.vn/api/khao-sat/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-  // 1. Gom toàn bộ dữ liệu từ các bước trước
-  const payload = {
-    name: globalFormMemory["q1_name"] || "",
-    email: globalFormMemory["q1_email"] || "",
-    gender: globalFormMemory["q1_gender"] || "",
-    province: globalFormMemory["q1_province"] || "",
-    school: globalFormMemory["q1_school"] || "",
-    className: globalFormMemory["q1_class"] || "",
-    selectedBlock: globalFormMemory["selectedBlock"] || "",
-    pathway: "Trong nước", // Đổi thành "Du học" nếu ở trang quiz2_3
-    eduSystem: eduSystem,  // Đổi thành country nếu ở trang quiz2_3
-    major: major,
-    
-    // ĐẶC BIỆT LƯU Ý: Phải truyền số điện thoại vào đây. 
-    // Giả sử bạn đã gọi API lấy SĐT Zalo ở trang trước và lưu vào formState tên là "user_phone"
-    phone: globalFormMemory["user_phone"] || "0987654321", // Thay chuỗi cứng này bằng biến chứa SĐT thật của bạn
-  };
+      const result = await response.json();
 
-  try {
-    // 2. Gọi API đến Backend Node.js của bạn (Thay URL thành Domain BE thật của bạn)
-    const response = await fetch("http://localhost:3003/api/khao-sat/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      // Thành công -> Chuyển sang trang Cảm ơn
-      navigate("/thanks");
-    } else {
-      alert("Lỗi: " + result.message);
+      if (result.success) {
+        navigate("/thanks");
+      } else {
+        alert("Lỗi: " + result.message);
+      }
+    } catch (error) {
+      alert("Không thể kết nối đến máy chủ Backend!");
+      console.error(error);
     }
-  } catch (error) {
-    alert("Không thể kết nối đến máy chủ Backend!");
-    console.error(error);
-  }
-};
+  };
 
   // SVG Icon Tam giác Dropdown
   const SolidCaret = ({ isOpen, onClick }) => (
