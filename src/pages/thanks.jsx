@@ -1,5 +1,5 @@
-import React from "react";
-import { Page, useNavigate, Icon } from "zmp-ui";
+import React, { useState, useEffect } from "react";
+import { Page, useNavigate, Icon, Modal } from "zmp-ui";
 
 // Lưu ý: Thay đổi tên file hình ảnh mascot tung hoa giấy cho phù hợp với dự án
 import mascotThanksImg from "../static/images/arigato.png"; 
@@ -15,10 +15,35 @@ import iconContact from "../static/icons/phone.png";      // Thay bằng tên fi
 const ThanksPage = () => {
   const navigate = useNavigate();
 
-  // Danh sách các nút link (Bây giờ dùng thuộc tính img chứa biến ảnh)
+  // State quản lý việc hiển thị popup
+  const [isSuggestModalVisible, setIsSuggestModalVisible] = useState(false);
+
+  // Hiệu ứng đếm ngược: 3 giây sau khi vào trang sẽ hiện Modal
+  useEffect(() => {
+    const showTimer = setTimeout(() => {
+      setIsSuggestModalVisible(true);
+    }, 3000); // Đợi 3 giây
+
+    // Dọn dẹp bộ đếm khi rời khỏi trang để tránh rò rỉ bộ nhớ
+    return () => clearTimeout(showTimer);
+  }, []);
+
+  // Hiệu ứng đếm ngược: Tự tắt Modal sau 5 giây kể từ lúc hiện lên
+  useEffect(() => {
+    let hideTimer;
+    if (isSuggestModalVisible) {
+      hideTimer = setTimeout(() => {
+        setIsSuggestModalVisible(false);
+      }, 10000); // Tồn tại trong 10 giây
+    }
+
+    return () => {
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, [isSuggestModalVisible]);
+
+  // Danh sách các nút link
   const menuLinks = [
-    { label: "Kiểm tra thần số học", path: "/numerology", img: iconNumerology },
-    { label: "Mini game khác", path: "/minigames", img: iconGame },
     { label: "Website chính thức", path: "/website", img: iconWeb },
     { label: "Liên hệ tư vấn", path: "/contact", img: iconContact },
   ];
@@ -67,7 +92,7 @@ const ThanksPage = () => {
               onClick={() => navigate(item.path)}
               className="flex items-center group cursor-pointer w-full active:scale-95 transition-transform"
             >
-              {/* Box chứa Icon màu hồng - ĐÃ ĐỔI THÀNH THẺ IMG */}
+              {/* Box chứa Icon màu hồng */}
               <div className="bg-[#ffadad] w-[60px] h-[52px] flex items-center justify-center z-10 rounded-l-[18px] shadow-md">
                 <img 
                   src={item.img} 
@@ -85,6 +110,36 @@ const ThanksPage = () => {
         </div>
 
       </div>
+
+      {/* ================= POPUP HỎI KHÁM PHÁ THÊM ================= */}
+      <Modal
+        visible={isSuggestModalVisible}
+        title="Khám phá thêm!"
+        onClose={() => setIsSuggestModalVisible(false)} // Bấm ra ngoài để đóng
+        verticalActions
+      >
+        <div className="text-center mb-6 text-[#11397b] font-medium text-base">
+          Bạn có muốn khám phá thêm <br/> các nội dung thú vị khác không?
+        </div>
+        <div className="flex gap-3">
+          <button 
+            className="flex-1 py-3 bg-gray-200 text-gray-700 font-bold rounded-xl active:scale-95 transition-transform"
+            onClick={() => setIsSuggestModalVisible(false)}
+          >
+            Không
+          </button>
+          <button 
+            className="flex-1 py-3 bg-[#003570] text-white font-bold rounded-xl active:scale-95 transition-transform shadow-lg"
+            onClick={() => {
+              setIsSuggestModalVisible(false);
+              navigate("/more"); // Chuyển sang trang more
+            }}
+          >
+            Có
+          </button>
+        </div>
+      </Modal>
+
     </Page>
   );
 };
