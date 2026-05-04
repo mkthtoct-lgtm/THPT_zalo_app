@@ -10,7 +10,7 @@ import Quiz2_1Page from '../pages/quiz2_1';
 import Quiz2_2Page from '../pages/quiz2_2';
 import Quiz2_3Page from '../pages/quiz2_3';
 import ThanksPage from '../pages/thanks';
-
+import MorePage from '../pages/more';
 const Layout = () => {
   return (
     <App>
@@ -23,6 +23,7 @@ const Layout = () => {
           <Route path="/quiz2_2" element={<Quiz2_2Page />} />
           <Route path="/quiz2_3" element={<Quiz2_3Page />} />
           <Route path="/thanks" element={<ThanksPage />} />
+          <Route path="/more" element={<MorePage />} />
         </AnimationRoutes>
       </ZMPRouter>
     </App>

@@ -136,8 +136,8 @@ const Quiz2_2Page = () => {
           </div>
         </div>
 
-        {/* Form Container */}
-        <div className="flex-1 px-4 pb-4 relative z-10 flex flex-col justify-start">
+        {/* Form Container - ĐÃ SỬA Z-INDEX LÊN CAO NHẤT (z-[60]) ĐỂ KHÔNG BỊ KHỐI HOTLINE CHE */}
+        <div className="flex-1 px-4 pb-4 relative z-[60] flex flex-col justify-start">
           <div className="bg-white/95 backdrop-blur-md rounded-[35px] shadow-2xl p-6 pb-8 flex flex-col border border-white">
             
             {/* Box Câu hỏi (Glassmorphism) */}
@@ -218,18 +218,21 @@ const Quiz2_2Page = () => {
           </div>
         </div>
 
-        {/* --- KHỐI LIÊN HỆ ĐIỆN THOẠI DƯỚI CÙNG (Style từ index.jsx) --- */}
-        <div className="px-6 pb-10 flex items-center w-full shrink-0">
-          <div className="flex w-full items-center shadow-lg rounded-xl">
-            {/* Box Icon Hồng */}
-            <div className="bg-[#ffadad] w-14 h-12 flex items-center justify-center z-10 rounded-l-xl">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
+        {/* ================= KHỐI LIÊN HỆ ĐIỆN THOẠI ĐÃ ĐƯỢC TỐI ƯU ================= */}
+        {/* Đã hạ z-index xuống z-10 để không đè lên list. Dùng items-stretch để ô hồng và chữ luôn bằng chiều cao */}
+        <div className="px-6 pb-10 flex w-full shrink-0 relative z-10">
+          <div className="flex w-full items-stretch shadow-[0_8px_16px_rgba(0,0,0,0.08)] rounded-[14px] overflow-hidden border border-white/60">
+            {/* Box Icon Hồng: Gắn shrink-0 và định rộng cố định để không vỡ khung */}
+            <div className="bg-[#ffadad] w-[60px] shrink-0 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-[22px] h-[22px] text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 512 512">
                 <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z"/>
               </svg>
             </div>
-            {/* Box Text Trong suốt */}
-            <div className="flex-1 bg-white/30 backdrop-blur-xl py-[14px] px-4 rounded-r-xl border border-white/50 text-white font-medium text-[15px] ml-[-2px] tracking-wide text-center">
-              Liên hệ tại: <span className="opacity-70 mx-1"></span>1800 9078
+            {/* Box Text: Đổi nền trắng đục hơn, chữ xanh đậm dễ đọc, số điện thoại nổi bật */}
+            <div className="flex-1 bg-white/70 backdrop-blur-xl py-[14px] px-2 flex justify-center items-center text-center">
+              <span className="text-[#11397b] font-semibold text-[15px] tracking-wide">
+                Liên hệ tại: <span className="font-black text-[#ff4d4f] ml-1 text-[16px]">1800 9078</span>
+              </span>
             </div>
           </div>
         </div>

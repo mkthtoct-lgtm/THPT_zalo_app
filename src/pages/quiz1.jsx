@@ -51,6 +51,30 @@ const Quiz1Page = () => {
     setIsSchoolOpen(false);
   };
 
+  // ================= LOGIC XỬ LÝ NHẬP LỚP HỌC (CHỈ CHO PHÉP 10, 11, 12) =================
+  const handleClassChange = (e) => {
+    // Chuyển in hoa luôn cho đẹp (vd: 10a1 -> 10A1)
+    const val = e.target.value.toUpperCase();
+
+    // Cho phép xóa rỗng
+    if (val === "") {
+      setClassName(val);
+      return;
+    }
+
+    // Ký tự đầu tiên bắt buộc phải là số 1
+    if (val.length === 1) {
+      if (val === "1") setClassName(val);
+      return;
+    }
+
+    // Từ ký tự thứ 2 trở đi, 2 số đầu bắt buộc phải là 10, 11 hoặc 12
+    const prefix = val.substring(0, 2);
+    if (["10", "11", "12"].includes(prefix)) {
+      setClassName(val);
+    }
+  };
+
   // ================= LOGIC KIỂM TRA FORM (VALIDATION) =================
   const handleNext = () => {
     // 1. Kiểm tra xem có ô nào bị bỏ trống không (loại bỏ khoảng trắng 2 đầu bằng .trim())
@@ -63,12 +87,6 @@ const Quiz1Page = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       alert("Định dạng Email không hợp lệ!");
-      return;
-    }
-
-    // 3. Kiểm tra xem đã tích chọn đồng ý chưa
-    if (!isAgreed) {
-      alert("Vui lòng tích vào ô 'Tôi đồng ý sử dụng thông tin' để tiếp tục!");
       return;
     }
 
@@ -96,7 +114,11 @@ const Quiz1Page = () => {
           <Icon icon="zi-chevron-left" className="text-[#11397b] text-xl font-black pr-0.5" />
         </div>
         
-        <div onClick={handleNext} className="w-10 h-10 bg-white/70 backdrop-blur-md shadow-sm border border-white/50 rounded-full flex items-center justify-center cursor-pointer active:scale-90 transition-transform">
+        {/* Nút mũi tên chuyển trang góc trên bên phải cũng cần bị chặn nếu chưa đồng ý */}
+        <div 
+          onClick={isAgreed ? handleNext : undefined} 
+          className={`w-10 h-10 backdrop-blur-md shadow-sm border rounded-full flex items-center justify-center transition-transform ${isAgreed ? "bg-white/70 border-white/50 cursor-pointer active:scale-90" : "bg-white/40 border-white/30 opacity-50 cursor-not-allowed"}`}
+        >
           <Icon icon="zi-chevron-right" className="text-[#11397b] text-xl font-black pl-0.5" />
         </div>
       </div>
@@ -199,7 +221,7 @@ const Quiz1Page = () => {
                   <input 
                     type="text" 
                     value={className} 
-                    onChange={(e) => setClassName(e.target.value)} 
+                    onChange={handleClassChange}  
                     placeholder="10A5" 
                     className="w-full bg-transparent outline-none text-[#11397b] font-medium py-1" 
                   />
@@ -208,18 +230,27 @@ const Quiz1Page = () => {
                 <button onClick={() => setGender("Nữ")} className={`flex-1 rounded-xl font-bold transition-all shadow-sm ${gender === "Nữ" ? "bg-[#ffadad] text-white" : "bg-gray-100 text-gray-400"}`}>Nữ</button>
               </div>
 
-              <button onClick={handleNext} className="w-full py-4 bg-[#003570] text-white text-lg font-bold rounded-2xl shadow-xl active:scale-95 transition-all mt-2 relative z-10">
+              <button 
+                onClick={handleNext} 
+                disabled={!isAgreed}
+                className={`w-full py-4 text-lg font-bold rounded-2xl shadow-xl transition-all mt-2 relative z-10 ${
+                  isAgreed 
+                    ? "bg-[#003570] text-white active:scale-95 cursor-pointer" 
+                    : "bg-gray-400 text-gray-100 opacity-60 cursor-not-allowed"
+                }`}
+              >
                 Tiếp tục
               </button>
             </div>
           </div>
         </div>
 
+        {/* ĐÃ FIX SHRINK-0 CHO HÌNH TRÒN Ở KHỐI NÀY */}
         <div className="px-8 pb-8 flex items-center gap-3 relative z-10">
-          <div onClick={() => setIsAgreed(!isAgreed)} className={`w-6 h-6 border-2 border-[#11397b] rounded-full flex items-center justify-center transition-all cursor-pointer ${isAgreed ? "bg-[#11397b]" : "bg-transparent"}`}>
+          <div onClick={() => setIsAgreed(!isAgreed)} className={`w-6 h-6 shrink-0 border-2 border-[#11397b] rounded-full flex items-center justify-center transition-all cursor-pointer ${isAgreed ? "bg-[#11397b]" : "bg-transparent"}`}>
             {isAgreed && <Icon icon="zi-check" className="text-white scale-75" />}
           </div>
-          <span className="text-[#11397b] text-sm font-semibold cursor-pointer" onClick={() => setIsAgreed(!isAgreed)}>Tôi đồng ý sử dụng thông tin cho bài khảo sát</span>
+          <span className="text-[#11397b] text-sm font-semibold cursor-pointer leading-snug" onClick={() => setIsAgreed(!isAgreed)}>Tôi đồng ý sử dụng thông tin cho bài khảo sát</span>
         </div>
       </div>
     </Page>
