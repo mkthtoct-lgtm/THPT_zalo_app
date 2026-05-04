@@ -47,7 +47,7 @@ const Quiz2_3Page = () => {
       // BIẾN QUỐC GIA ĐÃ ĐƯỢC CHUẨN HÓA THÀNH studyCountry
       studyCountry: studyCountry,  
       major: major,
-      phone: globalFormMemory["user_phone"] || "0987654321",
+      phone: globalFormMemory["user_phone"] || "",
     };
 
     try {

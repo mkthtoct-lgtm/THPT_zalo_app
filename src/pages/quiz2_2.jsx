@@ -45,7 +45,7 @@ const Quiz2_2Page = () => {
       pathway: "Trong nước", 
       eduSystem: eduSystem,  
       major: major,
-      phone: globalFormMemory["user_phone"] || "0987654321", 
+      phone: globalFormMemory["user_phone"] || "",
     };
 
     try {
