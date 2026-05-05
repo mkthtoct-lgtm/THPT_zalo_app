@@ -47,8 +47,13 @@ const Quiz2_3Page = () => {
       // BIẾN QUỐC GIA ĐÃ ĐƯỢC CHUẨN HÓA THÀNH studyCountry
       studyCountry: studyCountry,  
       major: major,
-      phone: globalFormMemory["user_phone"] || "0987654321",
+      phone: globalFormMemory["user_phone"] || "",
     };
+
+    console.log("📤 [Quiz2_3] Payload gửi đi:", JSON.stringify(payload, null, 2));
+    console.log("🎯 Pathway:", payload.pathway);
+    console.log("🎯 School:", payload.school);
+    console.log("🎯 SelectedBlock:", payload.selectedBlock);
 
     try {
       const response = await fetch("https://api.hto.edu.vn/api/khao-sat/submit", {
@@ -60,15 +65,18 @@ const Quiz2_3Page = () => {
       });
 
       const result = await response.json();
+      console.log("📥 [Quiz2_3] Response từ server:", result);
+      console.log("💾 Bảng lưu vào:", result.sheet || "Không xác định");
 
       if (result.success) {
+        console.log("✅ Gửi thành công! Lưu vào:", result.sheet);
         navigate("/thanks");
       } else {
         alert("Lỗi: " + result.message);
       }
     } catch (error) {
       alert("Không thể kết nối đến máy chủ Backend!");
-      console.error(error);
+      console.error("❌ [Quiz2_3] Lỗi gửi dữ liệu:", error);
     }
   };
 

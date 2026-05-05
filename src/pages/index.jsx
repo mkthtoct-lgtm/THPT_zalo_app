@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Page, useNavigate, Icon } from "zmp-ui";
 
 // IMPORT API CỦA ZALO VÀ BỘ NHỚ TẠM
-import { getPhoneNumber } from "zmp-sdk/apis";
+import { getAccessToken, getPhoneNumber } from "zmp-sdk/apis";
 import { globalFormMemory } from "../hooks/useFormState";
 
 import mascotImg from "../static/images/Mascot Hito_9 1.png"; 
@@ -24,38 +24,53 @@ const HomePage = () => {
   // HÀM TỰ ĐỘNG XIN QUYỀN VÀ LẤY SỐ ĐIỆN THOẠI KHI MỞ APP
   // ====================================================================
   // globalFormMemory["user_phone"] = "0987654321";
-  useEffect(() => {
-    const fetchZaloPhoneNumber = async () => {
-      try {
-        // 1. Xin quyền lấy SĐT (Sẽ hiện popup cho người dùng xác nhận)
-        const { token } = await getPhoneNumber();
-        
-        if (token) {
-          // 2. Bắn token xuống Backend Node.js để giải mã
-          // LƯU Ý: Đổi "https://domain-backend-cua-ban.com" thành link thật của Backend
-          const response = await fetch("https://api.hto.edu.vn/get-phone", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ accessToken: token, code: token }) 
-          });
+ useEffect(() => {
+  const fetchZaloPhoneNumber = async () => {
+    try {
+      // 1. Lấy Access Token và Phone Token từ Zalo SDK
+      // WelcomeScreen sử dụng getAccessToken và getPhoneNumber song song
+      const accessToken = await getAccessToken({});
+      const { token } = await getPhoneNumber({});
 
-          const data = await response.json();
+      if (token && accessToken) {
+        // 2. Gửi dữ liệu lên endpoint mới: /get-phone-new
+        const response = await fetch("https://api.hto.edu.vn/get-phone-new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            accessToken: accessToken,
+            code: token, // 'code' ở đây chính là token từ getPhoneNumber
+          }),
+        });
 
-          if (data.success && data.phone) {
-            // 3. Cất số điện thoại lấy được vào bộ nhớ tạm toàn cục
-            globalFormMemory["user_phone"] = data.phone;
-            console.log("Đã lưu SĐT thành công:", data.phone);
-          }
+        const data = await response.json();
+        console.log("📞 Dữ liệu trả về từ /get-phone-new:", data);
+
+        // 3. Trích xuất số điện thoại dựa trên cấu trúc linh hoạt của code mẫu
+        const phoneNumber =
+          data?.phoneNumber ||
+          data?.data?.number ||
+          data?.data?.phone_number ||
+          data?.number ||
+          null;
+
+        if (phoneNumber) {
+          // Lưu vào bộ nhớ tạm
+          globalFormMemory["user_phone"] = phoneNumber;
+          console.log("✅ Đã lưu SĐT thành công:", phoneNumber);
+        } else {
+          console.warn("⚠️ Không tìm thấy SĐT trong response:", data);
         }
-      } catch (error) {
-        console.error("Lỗi khi lấy số điện thoại Zalo:", error);
       }
-    };
+    } catch (error) {
+      console.error("❌ Lỗi khi lấy số điện thoại Zalo:", error);
+    }
+  };
 
-    fetchZaloPhoneNumber();
-  }, []);
+  fetchZaloPhoneNumber();
+}, []);
 
   return (
     <Page className="relative p-0 m-0 overflow-hidden font-['Be_Vietnam_Pro'] min-h-screen flex flex-col">
