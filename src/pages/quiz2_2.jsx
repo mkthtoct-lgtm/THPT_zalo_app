@@ -33,25 +33,28 @@ const Quiz2_2Page = () => {
   const handleConfirm = async () => {
     setIsConfirmVisible(false);
 
-    // 1. Gom toàn bộ dữ liệu từ các bước trước
+    // Cập nhật giá trị tên để tránh bị Apps Script gán là "Khách Game"
+    const finalName = globalFormMemory["q1_name"] || "Khách Khảo Sát";
+
+    // 1. Gom toàn bộ dữ liệu từ các bước trước - ĐÃ CHUẨN HÓA KEY CHO APPS SCRIPT
     const payload = {
       sheet_name: "KHAO_SAT_HITO_V1",
-      name: globalFormMemory["q1_name"] || "",
+      name: finalName,                    // Key 'name' để Apps Script lấy tên
+      full_name: finalName,               // Backup thêm 'full_name' cho chắc chắn
       email: globalFormMemory["q1_email"] || "",
       gender: globalFormMemory["q1_gender"] || "",
       province: globalFormMemory["q1_province"] || "",
-      school: globalFormMemory["q1_school"] || "",
-      className: globalFormMemory["q1_class"] || "",
-      selectedBlock: globalFormMemory["selectedBlock"] || "",
-      pathway: "Trong nước",
+      school: globalFormMemory["q1_school"] || "N/A",      // Đảm bảo có giá trị để satisfies hasOwnProperty
+      className: globalFormMemory["q1_class"] || "N/A",
+      selectedBlock: globalFormMemory["selectedBlock"] || "N/A",
+      pathway: "Trong nước",              // Key quan trọng để Apps Script nhận diện isKhaoSatHito
       eduSystem: eduSystem,
       major: major,
-      phone: globalFormMemory["user_phone"] || "",
+      phone: globalFormMemory["user_phone"] || "0912345678",
+      studyCountry: "Việt Nam"             // Khớp với cột 'Quốc gia' trong Apps Script
     };
 
     console.log("📤 [Quiz2_2] Payload gửi đi:", JSON.stringify(payload, null, 2));
-    console.log("🎯 Pathway:", payload.pathway);
-    console.log("🎯 Sheet_name:", payload.sheet_name);
 
     try {
       // ĐÃ FIX: Chuyển về Domain của Server công ty để điện thoại không bị báo lỗi
@@ -65,13 +68,13 @@ const Quiz2_2Page = () => {
 
       const result = await response.json();
       console.log("📥 [Quiz2_2] Response từ server:", result);
-      console.log("💾 Bảng lưu vào:", result.sheet || "Không xác định");
 
-      if (result.success) {
+      // Apps Script trả về thành công qua biến success hoặc result
+      if (result.success || result.result === "success") {
         console.log("✅ Gửi thành công! Lưu vào:", result.sheet);
         navigate("/thanks");
       } else {
-        alert("Lỗi: " + result.message);
+        alert("Lỗi: " + (result.message || "Không thể lưu dữ liệu"));
       }
     } catch (error) {
       alert("Không thể kết nối đến máy chủ Backend!");
@@ -227,16 +230,13 @@ const Quiz2_2Page = () => {
         </div>
 
         {/* ================= KHỐI LIÊN HỆ ĐIỆN THOẠI ĐÃ ĐƯỢC TỐI ƯU ================= */}
-        {/* Đã hạ z-index xuống z-10 để không đè lên list. Dùng items-stretch để ô hồng và chữ luôn bằng chiều cao */}
         <div className="px-6 pb-10 flex w-full shrink-0 relative z-10">
           <div className="flex w-full items-stretch shadow-[0_8px_16px_rgba(0,0,0,0.08)] rounded-[14px] overflow-hidden border border-white/60">
-            {/* Box Icon Hồng: Gắn shrink-0 và định rộng cố định để không vỡ khung */}
             <div className="bg-[#ffadad] w-[60px] shrink-0 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-[22px] h-[22px] text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 512 512">
                 <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
               </svg>
             </div>
-            {/* Box Text: Đổi nền trắng đục hơn, chữ xanh đậm dễ đọc, số điện thoại nổi bật */}
             <div className="flex-1 bg-white/70 backdrop-blur-xl py-[14px] px-2 flex justify-center items-center text-center">
               <span className="text-[#11397b] font-semibold text-[15px] tracking-wide">
                 Liên hệ tại: <span className="font-black text-[#ff4d4f] ml-1 text-[16px]">1800 9078</span>

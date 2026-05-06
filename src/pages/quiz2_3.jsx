@@ -35,7 +35,10 @@ const Quiz2_3Page = () => {
 
     // 1. Gom toàn bộ dữ liệu từ các bước trước
     const payload = {
-      name: globalFormMemory["q1_name"] || "",
+      sheet_name: "KHAO_SAT_HITO_V1",
+      name: finalName,                    // Key 'name' để Apps Script lấy tên
+      full_name: finalName,               // Backup thêm 'full_name' cho chắc chắn
+      // name: globalFormMemory["q1_name"] || "",
       email: globalFormMemory["q1_email"] || "",
       gender: globalFormMemory["q1_gender"] || "",
       province: globalFormMemory["q1_province"] || "",
@@ -47,7 +50,7 @@ const Quiz2_3Page = () => {
       // BIẾN QUỐC GIA ĐÃ ĐƯỢC CHUẨN HÓA THÀNH studyCountry
       studyCountry: studyCountry,  
       major: major,
-      phone: globalFormMemory["user_phone"] || "",
+      phone: globalFormMemory["user_phone"] || "0123456789",
     };
 
     console.log("📤 [Quiz2_3] Payload gửi đi:", JSON.stringify(payload, null, 2));

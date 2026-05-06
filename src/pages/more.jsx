@@ -26,19 +26,19 @@ const MorePage = () => {
       id: 2, 
       title: "Trắc Nghiệm Thần Số Học", 
       description: "Giải mã bản thân và định hướng tương lai qua những con số.",
-      link: "https://zalo.me/s/2716798080300525916/?utm_source=zalo-qr" 
+      link: "https://zalo.me/s/1957772855304961802/?utm_source=zalo-qr" 
     },
     { 
       id: 3, 
       title: "Đánh Giá Ngoại Ngữ", 
       description: "Kiểm tra trình độ nhanh chóng và nhận lộ trình cá nhân hóa.",
-      link: "/project-3" 
+      link: "https://zalo.me/s/2490215508587571793/?utm_source=zalo-qr" 
     },
     { 
       id: 4, 
       title: "Đánh Giá Hồ Sơ Visa", 
       description: "Phân tích tỷ lệ đỗ và tư vấn hoàn thiện giấy tờ du học.",
-      link: "/project-4" 
+      link: "https://zalo.me/s/4558907065620595343/?utm_source=zalo-qr" 
     },
   ];
 
